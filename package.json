@@ -4,9 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:turbo": "node scripts/dev-safe.mjs && next dev --turbopack",
+    "clean:next": "node scripts/clean-next.mjs",
+    "dev:fresh": "pnpm clean:next && pnpm dev",
+    "dev:safe": "node scripts/dev-safe.mjs",
+    "dev:prepare": "node scripts/dev-safe.mjs --prepare-only",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:check": "node scripts/check-db.mjs",
+    "db:cleanup-partial": "node scripts/cleanup-partial-migration.mjs",
+    "db:seed:user": "tsx --env-file=.env scripts/seed-user.ts",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",
@@ -42,6 +54,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.10",

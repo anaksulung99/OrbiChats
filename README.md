@@ -33,9 +33,15 @@ Password: password123
 Copy `.env.example` ke `.env.local`, isi `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `ADMIN_EMAIL`, dan `ADMIN_PASSWORD`.
 
 ```bash
-pnpm drizzle-kit generate
-pnpm drizzle-kit migrate
+pnpm db:generate
+pnpm db:migrate
+pnpm db:check
+pnpm db:seed:user
 ```
+
+`db:migrate` memakai driver `pg` agar stabil untuk Neon PostgreSQL di Windows. Kalau migration pernah gagal di tengah dan meninggalkan enum parsial, jalankan `pnpm db:cleanup-partial`, lalu ulangi `pnpm db:migrate`.
+
+Default admin dibuat dari `ADMIN_EMAIL`, `ADMIN_PASSWORD`, dan `ADMIN_NAME` di `.env`.
 
 ## Deploy Vercel
 

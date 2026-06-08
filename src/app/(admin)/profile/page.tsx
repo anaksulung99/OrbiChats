@@ -1,3 +1,4 @@
+import { getServerSession } from "next-auth";
 import { Save } from "lucide-react";
 
 import { PageHeading } from "@/components/page-heading";
@@ -5,8 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { authOptions } from "@/lib/auth";
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const session = await getServerSession(authOptions);
+
   return (
     <>
       <PageHeading
@@ -22,11 +26,11 @@ export default function ProfilePage() {
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="name">Nama</FieldLabel>
-                <Input id="name" defaultValue="Admin Rotator" />
+                <Input id="name" defaultValue={session?.user?.name ?? ""} />
               </Field>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input id="email" type="email" defaultValue="admin@warotator.local" />
+                <Input id="email" type="email" defaultValue={session?.user?.email ?? ""} />
                 <FieldDescription>Perubahan email sebaiknya diverifikasi ulang sebelum aktif.</FieldDescription>
               </Field>
             </FieldGroup>

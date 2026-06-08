@@ -1,10 +1,8 @@
 import Link from "next/link";
-import { LogIn } from "lucide-react";
+import { Suspense } from "react";
 
-import { Button } from "@/components/ui/button";
+import { LoginForm } from "@/components/login-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 
 export default function LoginPage() {
   return (
@@ -14,25 +12,14 @@ export default function LoginPage() {
         <CardDescription>Masuk untuk mengelola campaign rotator dan agent WhatsApp.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="grid gap-5" action="/api/auth/callback/credentials" method="post">
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="email">Email</FieldLabel>
-              <Input id="email" name="email" type="email" defaultValue="admin@warotator.local" />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="password">Password</FieldLabel>
-              <Input id="password" name="password" type="password" defaultValue="password123" />
-            </Field>
-          </FieldGroup>
-          <Button className="bg-emerald-600 hover:bg-emerald-700">
-            <LogIn className="size-4" />
-            Login
-          </Button>
+        <div className="grid gap-5">
+          <Suspense fallback={null}>
+            <LoginForm />
+          </Suspense>
           <Link href="/forgot-password" className="text-center text-sm text-muted-foreground underline-offset-4 hover:underline">
             Forgot password?
           </Link>
-        </form>
+        </div>
       </CardContent>
     </Card>
   );
