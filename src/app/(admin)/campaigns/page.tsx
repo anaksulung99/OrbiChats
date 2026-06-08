@@ -5,6 +5,7 @@ import { PageHeading } from "@/components/page-heading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { CopyButton } from "@/components/copy-button";
 import { db } from "@/db";
 import { deleteCampaignAction } from "@/lib/actions";
 import { rotationModeLabels } from "@/lib/schemas";
@@ -34,7 +35,8 @@ export default async function CampaignsPage() {
         {!campaigns.length && (
           <Card className="rounded-lg">
             <CardContent className="text-sm text-muted-foreground">
-              Belum ada campaign. Buat campaign pertama untuk mulai routing WhatsApp.
+              Belum ada campaign. Buat campaign pertama untuk mulai routing
+              WhatsApp.
             </CardContent>
           </Card>
         )}
@@ -44,13 +46,20 @@ export default async function CampaignsPage() {
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="text-base font-semibold">{campaign.name}</h2>
-                  <Badge variant={campaign.status === "active" ? "default" : "secondary"}>
+                  <Badge
+                    variant={
+                      campaign.status === "active" ? "default" : "secondary"
+                    }
+                  >
                     {campaign.status}
                   </Badge>
-                  <Badge variant="outline">{rotationModeLabels[campaign.rotationMode]}</Badge>
+                  <Badge variant="outline">
+                    {rotationModeLabels[campaign.rotationMode]}
+                  </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  /r/{campaign.slug} - cap {campaign.trafficCapPerDay || "no limit"} visits/day
+                  /r/{campaign.slug} - cap{" "}
+                  {campaign.trafficCapPerDay || "no limit"} visits/day
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -67,6 +76,7 @@ export default async function CampaignsPage() {
                     Detail
                   </Link>
                 </Button>
+                <CopyButton slug={campaign.slug} />
               </div>
             </CardContent>
           </Card>

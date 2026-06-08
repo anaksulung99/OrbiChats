@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ExternalLink, Pencil, Trash2 } from "lucide-react";
+import { ExternalLink, Pencil, Trash2, Copy } from "lucide-react";
 import { eq } from "drizzle-orm";
 
 import { PageHeading } from "@/components/page-heading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CopyButton } from "@/components/copy-button";
 import { db } from "@/db";
 import { campaigns } from "@/db/schema";
 import { deleteCampaignAction } from "@/lib/actions";
@@ -26,6 +27,13 @@ export default async function CampaignDetailPage({
 
   if (!campaign) {
     notFound();
+  }
+
+  function handleCopy() {
+    if (!campaign) return;
+
+    const publicLink = `${window.location.origin}/r/${campaign.slug}`;
+    navigator.clipboard.writeText(publicLink);
   }
 
   return (
@@ -48,6 +56,7 @@ export default async function CampaignDetailPage({
                 Edit
               </Link>
             </Button>
+            <CopyButton slug={campaign.slug} />
           </div>
         }
       />
@@ -73,7 +82,9 @@ export default async function CampaignDetailPage({
               <span className="text-muted-foreground">Fallback</span>
               <span>{campaign.fallbackPhone}</span>
             </div>
-            <div className="rounded-lg bg-muted p-3">{campaign.messageTemplate}</div>
+            <div className="rounded-lg bg-muted p-3">
+              {campaign.messageTemplate}
+            </div>
           </CardContent>
         </Card>
         <Card className="rounded-lg">
@@ -81,7 +92,9 @@ export default async function CampaignDetailPage({
             <CardTitle>Public Link</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3">
-            <code className="rounded-lg bg-muted p-3 text-sm">/r/{campaign.slug}</code>
+            <code className="rounded-lg bg-muted p-3 text-sm">
+              /r/{campaign.slug}
+            </code>
             <Button asChild variant="outline">
               <Link href={`/r/${campaign.slug}`} target="_blank">
                 <ExternalLink className="size-4" />
