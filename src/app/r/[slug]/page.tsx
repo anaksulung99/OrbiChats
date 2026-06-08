@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -12,11 +12,15 @@ export default async function RotatorPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const resolved = resolveRotator(slug);
+  const resolved = await resolveRotator(slug);
 
   if (!resolved) {
     notFound();
   }
+
+  setTimeout(() => {
+    redirect(resolved.url);
+  }, 500);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
@@ -28,7 +32,11 @@ export default async function RotatorPage({
           <p className="text-sm text-muted-foreground">
             Kamu akan diarahkan ke {resolved.agent.name} melalui WhatsApp.
           </p>
-          <Button asChild size="lg" className="bg-emerald-600 hover:bg-emerald-700">
+          <Button
+            asChild
+            size="lg"
+            className="bg-emerald-600 hover:bg-emerald-700"
+          >
             <Link href={resolved.url}>
               <MessageCircle className="size-4" />
               Buka WhatsApp

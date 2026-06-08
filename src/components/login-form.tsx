@@ -56,7 +56,7 @@ export function LoginForm() {
             name="email"
             type="email"
             autoComplete="email"
-            defaultValue="admin@warotator.local"
+            placeholder="admin@domain.com"
           />
         </Field>
         <Field>
@@ -66,7 +66,7 @@ export function LoginForm() {
             name="password"
             type="password"
             autoComplete="current-password"
-            defaultValue="password123"
+            placeholder="********"
           />
           <FieldError>{error}</FieldError>
         </Field>

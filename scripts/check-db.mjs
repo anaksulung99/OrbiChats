@@ -1,9 +1,22 @@
 import "dotenv/config";
 import { Pool } from "pg";
 
+function getDatabaseUrl() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is not set");
+  }
+
+  const url = new URL(process.env.DATABASE_URL);
+
+  if (url.searchParams.get("sslmode") === "require") {
+    url.searchParams.set("sslmode", "verify-full");
+  }
+
+  return url.toString();
+}
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: true },
+  connectionString: getDatabaseUrl(),
 });
 
 try {

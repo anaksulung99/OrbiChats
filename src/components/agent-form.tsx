@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { Save } from "lucide-react";
 
@@ -30,10 +30,24 @@ const defaultValues: AgentFormValues = {
 };
 
 type FormErrors = Partial<Record<keyof AgentFormValues, string>>;
+type AgentSubmitAction = (
+  values: AgentFormValues
+) => Promise<{
+  ok: boolean;
+  message?: string;
+  fieldErrors?: Record<string, string>;
+}>;
 
-export function AgentForm({ initialValues }: { initialValues?: AgentFormValues }) {
+export function AgentForm({
+  initialValues,
+  action,
+}: {
+  initialValues?: AgentFormValues;
+  action: AgentSubmitAction;
+}) {
   const [errors, setErrors] = useState<FormErrors>({});
-  const [saved, setSaved] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isPending, startTransition] = useTransition();
   const values = useMemo(() => initialValues ?? defaultValues, [initialValues]);
   const form = useForm<AgentFormValues>({ defaultValues: values });
   const enabled = useWatch({ control: form.control, name: "enableSchedule" });
@@ -53,12 +67,21 @@ export function AgentForm({ initialValues }: { initialValues?: AgentFormValues }
           ])
         ) as FormErrors
       );
-      setSaved(false);
+      setMessage("");
       return;
     }
 
     setErrors({});
-    setSaved(true);
+    setMessage("");
+
+    startTransition(async () => {
+      const result = await action(parsed.data);
+
+      if (!result.ok) {
+        setErrors((result.fieldErrors ?? {}) as FormErrors);
+        setMessage(result.message ?? "");
+      }
+    });
   }
 
   return (
@@ -157,11 +180,11 @@ export function AgentForm({ initialValues }: { initialValues?: AgentFormValues }
             </FieldGroup>
           </CardContent>
         </Card>
-        <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700">
+        <Button type="submit" disabled={isPending} className="bg-emerald-600 hover:bg-emerald-700">
           <Save className="size-4" />
-          Simpan Agent
+          {isPending ? "Menyimpan..." : "Simpan Agent"}
         </Button>
-        {saved && <p className="text-sm text-emerald-700">Draft agent valid dan siap disimpan ke database.</p>}
+        {message && <p className="text-sm text-destructive">{message}</p>}
       </div>
     </form>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { CheckCircle2 } from "lucide-react";
 
@@ -37,14 +37,24 @@ const defaultValues: CampaignFormValues = {
 };
 
 type FormErrors = Partial<Record<keyof CampaignFormValues, string>>;
+type CampaignSubmitAction = (
+  values: CampaignFormValues
+) => Promise<{
+  ok: boolean;
+  message?: string;
+  fieldErrors?: Record<string, string>;
+}>;
 
 export function CampaignForm({
   initialValues,
+  action,
 }: {
   initialValues?: CampaignFormValues;
+  action: CampaignSubmitAction;
 }) {
   const [errors, setErrors] = useState<FormErrors>({});
-  const [saved, setSaved] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isPending, startTransition] = useTransition();
   const values = useMemo(() => initialValues ?? defaultValues, [initialValues]);
   const form = useForm<CampaignFormValues>({ defaultValues: values });
   const status = useWatch({ control: form.control, name: "status" });
@@ -63,12 +73,21 @@ export function CampaignForm({
           ])
         ) as FormErrors
       );
-      setSaved(false);
+      setMessage("");
       return;
     }
 
     setErrors({});
-    setSaved(true);
+    setMessage("");
+
+    startTransition(async () => {
+      const result = await action(parsed.data);
+
+      if (!result.ok) {
+        setErrors((result.fieldErrors ?? {}) as FormErrors);
+        setMessage(result.message ?? "");
+      }
+    });
   }
 
   return (
@@ -176,11 +195,11 @@ export function CampaignForm({
             </FieldGroup>
           </CardContent>
         </Card>
-        <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700">
+        <Button type="submit" disabled={isPending} className="bg-emerald-600 hover:bg-emerald-700">
           <CheckCircle2 className="size-4" />
-          Simpan Campaign
+          {isPending ? "Menyimpan..." : "Simpan Campaign"}
         </Button>
-        {saved && <p className="text-sm text-emerald-700">Draft campaign valid dan siap disimpan ke database.</p>}
+        {message && <p className="text-sm text-destructive">{message}</p>}
       </div>
     </form>
   );
