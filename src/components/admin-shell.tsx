@@ -5,6 +5,7 @@ import {
   LifeBuoy,
   LockKeyhole,
   LogOut,
+  Menu,
   Megaphone,
   Plus,
   ShieldCheck,
@@ -14,6 +15,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/components/sign-out-button";
 import { Separator } from "@/components/ui/separator";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const nav = [
   { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
@@ -22,6 +30,60 @@ const nav = [
   { href: "/profile", label: "Profile", icon: UserRound },
   { href: "/security", label: "Security", icon: LockKeyhole },
 ];
+
+function Brand() {
+  return (
+    <div className="flex h-16 items-center gap-2 px-5">
+      <div className="flex size-9 items-center justify-center rounded-lg bg-emerald-600 text-white">
+        <ShieldCheck className="size-5" />
+      </div>
+      <div>
+        <div className="text-sm font-semibold">WA Rotator</div>
+        <div className="text-xs text-muted-foreground">Agent routing panel</div>
+      </div>
+    </div>
+  );
+}
+
+function NavLinks() {
+  return (
+    <nav className="flex flex-1 flex-col gap-1 p-3">
+      {nav.map((item) => (
+        <Button key={item.href} asChild variant="ghost" className="justify-start">
+          <Link href={item.href}>
+            <item.icon className="size-4" />
+            {item.label}
+          </Link>
+        </Button>
+      ))}
+    </nav>
+  );
+}
+
+function UserPanel({
+  displayName,
+  displayEmail,
+}: {
+  displayName: string;
+  displayEmail: string;
+}) {
+  return (
+    <div className="p-3">
+      <div className="mb-3 rounded-lg border bg-muted/40 p-3">
+        <div className="truncate text-sm font-medium">{displayName}</div>
+        <div className="truncate text-xs text-muted-foreground">
+          {displayEmail}
+        </div>
+      </div>
+      <Button asChild className="w-full justify-start bg-emerald-600 hover:bg-emerald-700">
+        <Link href="/campaigns/new">
+          <Plus className="size-4" />
+          Campaign Baru
+        </Link>
+      </Button>
+    </div>
+  );
+}
 
 export function AdminShell({
   children,
@@ -39,47 +101,36 @@ export function AdminShell({
   return (
     <div className="min-h-screen bg-muted/30">
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r bg-background lg:flex lg:flex-col">
-        <div className="flex h-16 items-center gap-2 px-5">
-          <div className="flex size-9 items-center justify-center rounded-lg bg-emerald-600 text-white">
-            <ShieldCheck className="size-5" />
-          </div>
-          <div>
-            <div className="text-sm font-semibold">WA Rotator</div>
-            <div className="text-xs text-muted-foreground">Agent routing panel</div>
-          </div>
-        </div>
+        <Brand />
         <Separator />
-        <nav className="flex flex-1 flex-col gap-1 p-3">
-          {nav.map((item) => (
-            <Button key={item.href} asChild variant="ghost" className="justify-start">
-              <Link href={item.href}>
-                <item.icon className="size-4" />
-                {item.label}
-              </Link>
-            </Button>
-          ))}
-        </nav>
-        <div className="p-3">
-          <div className="mb-3 rounded-lg border bg-muted/40 p-3">
-            <div className="truncate text-sm font-medium">{displayName}</div>
-            <div className="truncate text-xs text-muted-foreground">
-              {displayEmail}
-            </div>
-          </div>
-          <Button asChild className="w-full justify-start bg-emerald-600 hover:bg-emerald-700">
-            <Link href="/campaigns/new">
-              <Plus className="size-4" />
-              Campaign Baru
-            </Link>
-          </Button>
-        </div>
+        <NavLinks />
+        <UserPanel displayEmail={displayEmail} displayName={displayName} />
       </aside>
       <div className="lg:pl-64">
         <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/95 px-4 backdrop-blur md:px-6">
-          <div>
-            <div className="text-sm font-medium">Admin Panel</div>
-            <div className="text-xs text-muted-foreground">
-              Logged in as {displayEmail}
+          <div className="flex items-center gap-3">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="lg:hidden">
+                  <Menu className="size-4" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72 p-0" showCloseButton>
+                <SheetHeader className="sr-only">
+                  <SheetTitle>Admin Menu</SheetTitle>
+                </SheetHeader>
+                <Brand />
+                <Separator />
+                <NavLinks />
+                <UserPanel displayEmail={displayEmail} displayName={displayName} />
+              </SheetContent>
+            </Sheet>
+            <div>
+              <div className="text-sm font-medium">Admin Panel</div>
+              <div className="text-xs text-muted-foreground">
+                Logged in as {displayEmail}
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2">

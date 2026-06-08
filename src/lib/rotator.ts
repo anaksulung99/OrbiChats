@@ -55,9 +55,8 @@ export async function resolveRotator(slug: string) {
     campaign,
     agent,
     message,
-    url:
-      campaign.linkMode === "deep_link"
-        ? `whatsapp://send?phone=${phone}&text=${encodedMessage}`
-        : `https://wa.me/${phone}?text=${encodedMessage}`,
+    linkMode: campaign.linkMode,
+    deepLinkUrl: `whatsapp://send?phone=${phone}&text=${encodedMessage}`,
+    standardUrl: `https://wa.me/${phone}?text=${encodedMessage}`,
   };
 }
