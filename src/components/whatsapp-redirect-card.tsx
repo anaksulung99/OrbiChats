@@ -31,7 +31,7 @@ export function WhatsAppRedirectCard({
   const [manualUrl, setManualUrl] = useState(standardUrl);
   const initialUrl = useMemo(
     () => (linkMode === "standard" ? standardUrl : deepLinkUrl),
-    [deepLinkUrl, linkMode, standardUrl]
+    [deepLinkUrl, linkMode, standardUrl],
   );
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export function WhatsAppRedirectCard({
 
     const timer = window.setTimeout(() => {
       window.location.href = targetUrl;
-    }, 650);
+    }, 300);
 
     return () => window.clearTimeout(timer);
   }, [deepLinkUrl, linkMode, standardUrl]);
